@@ -6,11 +6,6 @@ use Illuminate\Http\Request;
 
 class SSOController extends Controller
 {
-    public function index()
-    {
-        return view('home'); // Home view
-    }
-
     public function ssoprocess(Request $request)
     {
         if ($request->isMethod('get')) {
