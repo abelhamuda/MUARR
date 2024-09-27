@@ -6,5 +6,5 @@ use Illuminate\Http\Request;
 
 class AlphabitController extends Controller
 {
-    
+    //
 }

@@ -42,22 +42,6 @@ class SSOController extends Controller
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
-    
-
-    public function alphabit(Request $request)
-    {
-        return view('alphabit'); // Alphabit
-    }
-
-    public function icore(Request $request)
-    {
-        return view('icore'); // Icore
-    }
-
-    public function otherApp(Request $request)
-    {
-        return view('other_app'); // Other App
-    }
 
     private function parseCSV($filepath)
     {
