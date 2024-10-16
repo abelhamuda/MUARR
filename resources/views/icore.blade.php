@@ -3,7 +3,7 @@
 @section('title', 'icore')
 
 @section('content')
-    <h1 class="text-3xl font-bold mb-8">Alphabit Process</h1>
+    <h1 class="text-3xl font-bold mb-8">Icore Process</h1>
 
     {{-- Error Handling: Display an alert if there is an error --}}
     @if (session('error'))
@@ -29,7 +29,7 @@
 
         <div class="mb-6">
             <label class="block text-gray-700 text-sm font-bold mb-2" for="application_users">
-                Alphabit User List
+                Icore User List
             </label>
             <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
                    id="application_users" 
