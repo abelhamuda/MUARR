@@ -22,7 +22,7 @@ class AlphabitController extends Controller
             $activeEmployees = $this->parseCSV($request->file('active_employees')->getPathname(), 'employee');
     
             $zip = new \ZipArchive();
-            $zipFilename = 'alphabit_comparison_reports.zip';
+            $zipFilename = 'alphabit_comparison.zip';
             $zipPath = storage_path($zipFilename);
     
             if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) === TRUE) {
@@ -53,8 +53,8 @@ class AlphabitController extends Controller
     
             foreach ($header as $index => $columnName) {
                 $columnName = strtolower(trim($columnName));
-                if ($fileType === 'employee' && preg_match('/name/i', $columnName)) {
-                    $columns['name'] = $index;
+                if ($fileType === 'employee' && preg_match('/full name/i', $columnName)) {
+                    $columns['full_name'] = $index;
                 } elseif ($fileType === 'application') {
                     if ($columnName === 'opdesc') {
                         $columns['opdesc'] = $index;
@@ -70,12 +70,12 @@ class AlphabitController extends Controller
                 }
             }
     
-            if ($fileType === 'employee' && !isset($columns['name'])) {
-                throw new \Exception('No "Name" column found in the employee CSV file.');
+            if ($fileType === 'employee' && !isset($columns['full_name'])) {
+                throw new \Exception('No "Full Name" column found in the employee CSV file.');
             } elseif ($fileType === 'application' && !isset($columns['opdesc'])) {
                 throw new \Exception('No "OPDESC" column found in the application CSV file.');
             }
-
+    
             while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
                 $rows[] = $data;
             }
@@ -83,13 +83,13 @@ class AlphabitController extends Controller
         }
     
         return ['rows' => $rows, 'columns' => $columns];
-    }
+    }    
     
     private function compareData($activeEmployees, $applicationUsers)
     {
         $results = [];
         $activeRows = $activeEmployees['rows'];
-        $activeNameCol = $activeEmployees['columns']['name'];
+        $activeFullNameCol = $activeEmployees['columns']['full_name']; 
         $userRows = $applicationUsers['rows'];
         $userCols = $applicationUsers['columns'];
     
@@ -99,8 +99,8 @@ class AlphabitController extends Controller
             $userOpdesc = $user[$userCols['opdesc']];
     
             foreach ($activeRows as $employee) {
-                $employeeName = $employee[$activeNameCol];
-                if ($this->compareNames($userOpdesc, $employeeName)) {
+                $employeeFullName = $employee[$activeFullNameCol]; 
+                if ($this->compareNames($userOpdesc, $employeeFullName)) {
                     $status = 'Active';
                     $remark = 'Keep'; 
                     break;
@@ -120,6 +120,7 @@ class AlphabitController extends Controller
     
         return $results;
     }
+    
     
     private function generateCSV($data)
     {
