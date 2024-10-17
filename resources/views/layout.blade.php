@@ -14,6 +14,7 @@
                 <li><a href="{{ route('sso.process') }}" class="text-blue-500">SSO App</a></li>
                 <li><a href="{{ route('alphabit') }}" class="text-blue-500">Alphabit</a></li>
                 <li><a href="{{ route('icore') }}" class="text-blue-500">Icore</a></li>
+                <li><a href="{{ route('risk_app') }}" class="text-blue-500">Risk App</a></li>
                 <li><a href="{{ route('other.app') }}" class="text-blue-500">Other APP</a></li>
             </ul>
         </nav>
