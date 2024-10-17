@@ -3,7 +3,12 @@
 @section('title', 'SSO Process')
 
 @section('content')
-    <h1 class="text-3xl font-bold mb-8">SSO Process</h1>
+    <h1 class="text-3xl font-bold mb-1">SSO Process</h1>
+
+    {{-- Clickable SSO Information --}}
+    <h2 id="sso-info" class="font-regular mb-5 cursor-pointer text-blue-600 hover:underline">
+        SSO Application Information
+    </h2>
 
     {{-- Error Handling: Display an alert if there is an error --}}
     @if (session('error'))
@@ -61,6 +66,10 @@
     </form>
 
     <script>
+        document.getElementById('sso-info').addEventListener('click', function () {
+            alert('The SSO Application includes: \n- User Management System \n- Authentication Module \n- Secure Data Access Controls');
+        });
+
         const input = document.getElementById('application_users');
         let files = [];
 
