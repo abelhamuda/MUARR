@@ -67,7 +67,7 @@
 
     <script>
         document.getElementById('sso-info').addEventListener('click', function () {
-            alert('The SSO Application includes: \n- User Management System \n- Authentication Module \n- Secure Data Access Controls');
+            alert('The SSO Application includes: \n- BNC Account Registration \n- BNC Debt Collection Agency \n- BNC Dukcapil Reporting \n- BNC OJK BOX \n- BNC Reporting \n- BNC Signature Specimen \n- BNC SLIK \n- BNC SVC \n- BNC Insurance \n- BNC Portal \n- BNC PPATK/APUPPT \n- SSO AUTH');
         });
 
         const input = document.getElementById('application_users');
