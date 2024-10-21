@@ -16,6 +16,7 @@
                 <li><a href="{{ route('alphabit') }}" class="text-blue-500">Alphabit</a></li>
                 <li><a href="{{ route('icore') }}" class="text-blue-500">Icore</a></li>
                 <li><a href="{{ route('gitlab') }}" class="text-blue-500">Gitlab</a></li>
+                <li><a href="{{ route('adexchange') }}" class="text-blue-500">AD & Exchange</a></li>
                 <li><a href="{{ route('other.app') }}" class="text-blue-500">Other APP</a></li>
             </ul>
         </nav>
