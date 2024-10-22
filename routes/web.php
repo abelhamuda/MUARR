@@ -9,6 +9,7 @@ use App\Http\Controllers\GitlabController;
 use App\Http\Controllers\RiskAppController;
 use App\Http\Controllers\AdExchangeController;
 use App\Http\Controllers\OfficeAutomationController;
+use App\Http\Controllers\JiraController;
 
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -19,5 +20,6 @@ Route::match(['get', 'post'], '/risk_app', [RiskAppController::class, 'risk_app'
 Route::match(['get', 'post'], '/gitlab', [GitlabController::class, 'gitlab'])->name('gitlab');
 Route::match(['get', 'post'], '/adexchange', [AdExchangeController::class, 'adexchange'])->name('adexchange');
 Route::match(['get', 'post'], '/officeautomation', [OfficeAutomationController::class, 'officeautomation'])->name('officeautomation');
+Route::match(['get', 'post'], '/jira', [JiraController::class, 'jira'])->name('jira');
 Route::get('/icore', [IcoreController::class, 'icore'])->name('icore');
 Route::get('/other-app', [EmployeeController::class, 'otherApp'])->name('other.app');
