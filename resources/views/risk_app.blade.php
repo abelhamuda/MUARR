@@ -1,6 +1,6 @@
 @extends('layout')
 
-@section('title', 'risk_app')
+@section('title', 'Risk Application')
 
 @section('content')
     <h1 class="text-3xl font-bold mb-8">Risk App Process</h1>

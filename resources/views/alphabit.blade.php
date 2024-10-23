@@ -1,6 +1,6 @@
 @extends('layout')
 
-@section('title', 'alphabit')
+@section('title', 'Alphabit')
 
 @section('content')
     <h1 class="text-3xl font-bold mb-8">Alphabit Process</h1>

@@ -1,6 +1,6 @@
 @extends('layout')
 
-@section('title', 'icore')
+@section('title', 'Icore')
 
 @section('content')
     <h1 class="text-3xl font-bold mb-8">Icore Process</h1>
