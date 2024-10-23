@@ -56,14 +56,14 @@ class RiskAppController extends Controller
                 $columnName = strtolower(trim($columnName));
     
                 // Map required columns based on patterns
-                if (preg_match('/full\s?name/i', $columnName)) {
-                    $columns['full_name'] = $index;
-                } elseif (preg_match('/user_name/i', $columnName)) {
-                    $columns['user_name'] = $index;
-                } elseif (preg_match('/uid/i', $columnName)) {
-                    $columns['uid'] = $index;
+                if (preg_match('/email/i', $columnName)) {
+                    $columns['email'] = $index;
                 } elseif (preg_match('/login_account/i', $columnName)) {
                     $columns['login_account'] = $index;
+                } elseif (preg_match('/uid/i', $columnName)) {
+                    $columns['uid'] = $index;
+                } elseif (preg_match('/user_name/i', $columnName)) {
+                    $columns['user_name'] = $index;
                 } elseif (preg_match('/user_create_time/i', $columnName)) {
                     $columns['user_create_time'] = $index;
                 } elseif (preg_match('/user_update_time/i', $columnName)) {
@@ -80,8 +80,8 @@ class RiskAppController extends Controller
             }
     
             // Ensure that the required columns are present
-            if (!isset($columns['full_name']) && !isset($columns['user_name'])) {
-                throw new \Exception('No "Full Name" or "user_name" column found in the CSV file.');
+            if (!isset($columns['email']) && !isset($columns['login_account'])) {
+                throw new \Exception('No "Full Name" or "login_account" column found in the CSV file.');
             }
     
             while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
@@ -97,7 +97,7 @@ class RiskAppController extends Controller
     {
         $results = [];
         $activeRows = $activeEmployees['rows'];
-        $activeNameCol = $activeEmployees['columns']['full_name'];  
+        $activeNameCol = $activeEmployees['columns']['email'];  
         $userRows = $applicationUsers['rows'];
         $userCols = $applicationUsers['columns'];
     
@@ -106,8 +106,8 @@ class RiskAppController extends Controller
             $remark = 'Disable';
     
             // Check if the user name column exists and the row is an array
-            if (isset($userCols['user_name']) && is_array($user)) {
-                $userName = $this->getNameFromRecord($user, $userCols['user_name']);
+            if (isset($userCols['login_account']) && is_array($user)) {
+                $userName = $this->getNameFromRecord($user, $userCols['login_account']);
             } else {
                 continue; // Skip this iteration if there's no user name column or row is invalid
             }
@@ -129,8 +129,8 @@ class RiskAppController extends Controller
     
             $results[] = [
                 'UID' => $user[$userCols['uid']] ?? '', 
-                'Login Account' => $user[$userCols['login_account']] ?? '',
-                'User Name' => $userName,
+                'Login Account' => $userName,
+                'User Name' => $user[$userCols['user_name']] ?? '',
                 'Create Time' => $user[$userCols['user_create_time']] ?? '',
                 'Update Time' => $user[$userCols['user_update_time']] ?? '',
                 'Delete Flag' => $user[$userCols['delete_flag']] ?? '',
@@ -178,6 +178,6 @@ class RiskAppController extends Controller
 
         $similarity = 1 - (levenshtein($name1, $name2) / max(strlen($name1), strlen($name2)));
 
-        return $similarity >= 0.45;
+        return $similarity >= 0.8;
     }
 }
