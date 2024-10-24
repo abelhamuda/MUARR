@@ -10,6 +10,7 @@ use App\Http\Controllers\RiskAppController;
 use App\Http\Controllers\AdExchangeController;
 use App\Http\Controllers\OfficeAutomationController;
 use App\Http\Controllers\JiraController;
+use App\Http\Controllers\OmnixController;
 
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -21,5 +22,6 @@ Route::match(['get', 'post'], '/gitlab', [GitlabController::class, 'gitlab'])->n
 Route::match(['get', 'post'], '/adexchange', [AdExchangeController::class, 'adexchange'])->name('adexchange');
 Route::match(['get', 'post'], '/officeautomation', [OfficeAutomationController::class, 'officeautomation'])->name('officeautomation');
 Route::match(['get', 'post'], '/jira', [JiraController::class, 'jira'])->name('jira');
+Route::match(['get', 'post'], '/omnix', [OmnixController::class, 'omnix'])->name('omnix');
 Route::get('/icore', [IcoreController::class, 'icore'])->name('icore');
 Route::get('/other-app', [EmployeeController::class, 'otherApp'])->name('other.app');
