@@ -19,6 +19,8 @@
                 <li><a href="{{ route('adexchange') }}" class="text-blue-500">AD & Exchange</a></li>
                 <li><a href="{{ route('officeautomation') }}" class="text-blue-500">Office Automation</a></li>
                 <li><a href="{{ route('jira') }}" class="text-blue-500">Jira</a></li>
+                <li><a href="{{ route('omnix') }}" class="text-blue-500">Omnix</a></li>
+                <li><a href="{{ route('rtgs') }}" class="text-blue-500">RTGS</a></li>
                 <li><a href="{{ route('other.app') }}" class="text-blue-500">Other APP</a></li>
             </ul>
         </nav>

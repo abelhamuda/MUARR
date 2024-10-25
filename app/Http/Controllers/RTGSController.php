@@ -4,12 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class OmnixController extends Controller
+class RTGSController extends Controller
 {
-    public function omnix(Request $request)
+    public function rtgs(Request $request)
     {
         if ($request->isMethod('get')) {
-            return view('omnix');
+            return view('rtgs');
         }
 
         $request->validate([
@@ -54,27 +54,25 @@ class OmnixController extends Controller
             foreach ($header as $index => $columnName) {
                 $columnName = strtolower(trim($columnName));
                 // For active employees, we want the "Full Name" column
-                if (preg_match('/email/i', $columnName)) {
-                    $columns['email'] = $index;
+                if (preg_match('/full\s?name/i', $columnName)) {
+                    $columns['full_name'] = $index;
                 // For application users, we now want the "Employee Name" column
                 } elseif (preg_match('/name/i', $columnName)) {
                     $columns['name'] = $index;
-                 } elseif (preg_match('/email/i', $columnName)) {
-                    $columns['email'] = $index;
-                } elseif (preg_match('/nik/i', $columnName)) {
-                    $columns['nik'] = $index;
-                } elseif (preg_match('/role/i', $columnName)) {
-                    $columns['role'] = $index;
-                } elseif (preg_match('/divisi/i', $columnName)) {
-                    $columns['divisi'] = $index;
-                } elseif (preg_match('/jabatan/i', $columnName)) {
-                    $columns['jabatan'] = $index;
+                 } elseif (preg_match('/user\s?code/i', $columnName)) {
+                    $columns['user_code'] = $index;
+                 } elseif (preg_match('/participant/i', $columnName)) {
+                    $columns['participant'] = $index;
+                } elseif (preg_match('/is\s?locked/i', $columnName)) {
+                    $columns['is_locked'] = $index;
+                } elseif (preg_match('/modification\s?date/i', $columnName)) {
+                    $columns['modification_date'] = $index;
                 }
             }
 
             // Ensure that the required columns are present
-            if (!isset($columns['email']) && !isset($columns['email'])) {
-                throw new \Exception('No "Email on Employee" or "Email Application" column found in the CSV file.');
+            if (!isset($columns['full_name']) && !isset($columns['name'])) {
+                throw new \Exception('No "Full Name" or "Name" column found in the CSV file.');
             }
 
             while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
@@ -90,7 +88,7 @@ class OmnixController extends Controller
     {
         $results = [];
         $activeRows = $activeEmployees['rows'];
-        $activeNameCol = $activeEmployees['columns']['email'];  
+        $activeNameCol = $activeEmployees['columns']['full_name'];  
         $userRows = $applicationUsers['rows'];
         $userCols = $applicationUsers['columns'];
 
@@ -98,11 +96,10 @@ class OmnixController extends Controller
             $status = 'Resign';
             $remark = 'Disable';
 
-            // Check if the "CN" column exists and the row is an array
-            if (isset($userCols['email']) && is_array($user)) {
-                $userName = $this->getNameFromRecord($user, $userCols['email']);
+            if (isset($userCols['name']) && is_array($user)) {
+                $userName = $this->getNameFromRecord($user, $userCols['name']);
             } else {
-                continue; // Skip this iteration if there's no "CN" column or row is invalid
+                continue;
             }
 
             foreach ($activeRows as $employee) {
@@ -121,12 +118,11 @@ class OmnixController extends Controller
             }
 
             $results[] = [
-                'Email' => $userName,
-                'Name' => $user[$userCols['name']] ?? '',
-                'NIK' => $user[$userCols['nik']] ?? '',
-                'Role' => $user[$userCols['role']] ?? '',
-                'Divisi' => $user[$userCols['divisi']] ?? '',
-                'Jabatan' => $user[$userCols['jabatan']] ?? '',
+                'Name' => $userName,
+                'User Code' => $user[$userCols['user_code']] ?? '',
+                'Participant' => $user[$userCols['participant']] ?? '',
+                'Is Locked' => $user[$userCols['is_locked']] ?? '',
+                'Modification Date' => $user[$userCols['modification_date']] ?? '',
                 'Status' => $status,
                 'Remarks' => $remark
             ];
@@ -139,7 +135,7 @@ class OmnixController extends Controller
     {
         $output = fopen('php://temp', 'w');
 
-        fputcsv($output, [ 'Email', 'Name', 'NIK', 'Role', 'Divisi', 'Jabatan', 'Status', 'Remarks']);
+        fputcsv($output, [ 'Name', 'User Code', 'Participant', 'Is Locked', 'Modification Date', 'Status', 'Remarks']);
 
         foreach ($data as $row) {
             fputcsv($output, $row);
@@ -167,7 +163,6 @@ class OmnixController extends Controller
         }
 
         $similarity = 1 - (levenshtein($name1, $name2) / max(strlen($name1), strlen($name2)));
-
-        return $similarity >= 0.8;
+        return $similarity >= 0.75;
     }
 }

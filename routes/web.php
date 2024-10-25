@@ -11,6 +11,7 @@ use App\Http\Controllers\AdExchangeController;
 use App\Http\Controllers\OfficeAutomationController;
 use App\Http\Controllers\JiraController;
 use App\Http\Controllers\OmnixController;
+use App\Http\Controllers\RTGSController;
 
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -23,5 +24,9 @@ Route::match(['get', 'post'], '/adexchange', [AdExchangeController::class, 'adex
 Route::match(['get', 'post'], '/officeautomation', [OfficeAutomationController::class, 'officeautomation'])->name('officeautomation');
 Route::match(['get', 'post'], '/jira', [JiraController::class, 'jira'])->name('jira');
 Route::match(['get', 'post'], '/omnix', [OmnixController::class, 'omnix'])->name('omnix');
+Route::match(['get', 'post'], '/rtgs', [RTGSController::class, 'rtgs'])->name('rtgs');
+
+
+
 Route::get('/icore', [IcoreController::class, 'icore'])->name('icore');
 Route::get('/other-app', [EmployeeController::class, 'otherApp'])->name('other.app');
