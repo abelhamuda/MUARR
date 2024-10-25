@@ -12,6 +12,7 @@ use App\Http\Controllers\OfficeAutomationController;
 use App\Http\Controllers\JiraController;
 use App\Http\Controllers\OmnixController;
 use App\Http\Controllers\RTGSController;
+use App\Http\Controllers\SensordataController;
 
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -25,6 +26,7 @@ Route::match(['get', 'post'], '/officeautomation', [OfficeAutomationController::
 Route::match(['get', 'post'], '/jira', [JiraController::class, 'jira'])->name('jira');
 Route::match(['get', 'post'], '/omnix', [OmnixController::class, 'omnix'])->name('omnix');
 Route::match(['get', 'post'], '/rtgs', [RTGSController::class, 'rtgs'])->name('rtgs');
+Route::match(['get', 'post'], '/sensordata', [SensordataController::class, 'sensordata'])->name('sensordata');
 
 
 

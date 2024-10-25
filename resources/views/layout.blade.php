@@ -7,26 +7,31 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100">
-    <div class="container mx-auto p-8">
-        <nav class="mb-4">
-            <ul class="flex space-x-4">
-                <li><a href="{{ route('home') }}" class="text-blue-500">Home</a></li>
-                <li><a href="{{ route('sso.process') }}" class="text-blue-500">SSO App</a></li>
-                <li><a href="{{ route('risk_app') }}" class="text-blue-500">Risk App</a></li>
-                <li><a href="{{ route('alphabit') }}" class="text-blue-500">Alphabit</a></li>
-                <li><a href="{{ route('icore') }}" class="text-blue-500">Icore</a></li>
-                <li><a href="{{ route('gitlab') }}" class="text-blue-500">Gitlab</a></li>
-                <li><a href="{{ route('adexchange') }}" class="text-blue-500">AD & Exchange</a></li>
-                <li><a href="{{ route('officeautomation') }}" class="text-blue-500">Office Automation</a></li>
-                <li><a href="{{ route('jira') }}" class="text-blue-500">Jira</a></li>
-                <li><a href="{{ route('omnix') }}" class="text-blue-500">Omnix</a></li>
-                <li><a href="{{ route('rtgs') }}" class="text-blue-500">RTGS</a></li>
-                <li><a href="{{ route('other.app') }}" class="text-blue-500">Other APP</a></li>
-            </ul>
-        </nav>
-        <main>
-            @yield('content')
-        </main>
+    <div class="flex">
+        <!-- Sidebar -->
+        <div class="w-64 h-screen bg-gray-800 text-white p-6">
+            <nav class="space-y-2">
+                <a href="{{ route('home') }}" class="block text-blue-300 hover:bg-gray-700 px-3 py-2 rounded">Home</a>
+                <a href="{{ route('sso.process') }}" class="block text-blue-300 hover:bg-gray-700 px-3 py-2 rounded">SSO App</a>
+                <a href="{{ route('risk_app') }}" class="block text-blue-300 hover:bg-gray-700 px-3 py-2 rounded">Risk App</a>
+                <a href="{{ route('alphabit') }}" class="block text-blue-300 hover:bg-gray-700 px-3 py-2 rounded">Alphabit</a>
+                <a href="{{ route('icore') }}" class="block text-blue-300 hover:bg-gray-700 px-3 py-2 rounded">Icore</a>
+                <a href="{{ route('gitlab') }}" class="block text-blue-300 hover:bg-gray-700 px-3 py-2 rounded">Gitlab</a>
+                <a href="{{ route('adexchange') }}" class="block text-blue-300 hover:bg-gray-700 px-3 py-2 rounded">AD & Exchange</a>
+                <a href="{{ route('officeautomation') }}" class="block text-blue-300 hover:bg-gray-700 px-3 py-2 rounded">Office Automation</a>
+                <a href="{{ route('jira') }}" class="block text-blue-300 hover:bg-gray-700 px-3 py-2 rounded">Jira</a>
+                <a href="{{ route('omnix') }}" class="block text-blue-300 hover:bg-gray-700 px-3 py-2 rounded">Omnix</a>
+                <a href="{{ route('rtgs') }}" class="block text-blue-300 hover:bg-gray-700 px-3 py-2 rounded">RTGS</a>
+                <a href="{{ route('sensordata') }}" class="block text-blue-300 hover:bg-gray-700 px-3 py-2 rounded">Sensor</a>
+                <a href="{{ route('other.app') }}" class="block text-blue-300 hover:bg-gray-700 px-3 py-2 rounded">Other APP</a>
+            </nav>
+        </div>
+
+        <div class="flex-1 p-8">
+            <main>
+                @yield('content')
+            </main>
+        </div>
     </div>
 </body>
 </html>
