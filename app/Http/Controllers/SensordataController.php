@@ -166,6 +166,6 @@ class SensordataController extends Controller
 
         $similarity = 1 - (levenshtein($name1, $name2) / max(strlen($name1), strlen($name2)));
 
-        return $similarity >= 0.45;
+        return $similarity >= 0.8;
     }
 }
