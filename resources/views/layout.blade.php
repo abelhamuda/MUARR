@@ -9,7 +9,7 @@
 <body class="bg-gray-100">
     <div class="flex">
         <!-- Sidebar -->
-        <div class="w-64 h-screen bg-gray-800 text-white p-6">
+        <div class="w-64 h-full bg-gray-800 text-white p-6">
             <nav class="space-y-2">
                 <a href="{{ route('home') }}" class="block text-blue-300 hover:bg-gray-700 px-3 py-2 rounded">Home</a>
                 <a href="{{ route('sso.process') }}" class="block text-blue-300 hover:bg-gray-700 px-3 py-2 rounded">SSO App</a>
@@ -22,7 +22,8 @@
                 <a href="{{ route('jira') }}" class="block text-blue-300 hover:bg-gray-700 px-3 py-2 rounded">Jira</a>
                 <a href="{{ route('omnix') }}" class="block text-blue-300 hover:bg-gray-700 px-3 py-2 rounded">Omnix</a>
                 <a href="{{ route('rtgs') }}" class="block text-blue-300 hover:bg-gray-700 px-3 py-2 rounded">RTGS</a>
-                <a href="{{ route('sensordata') }}" class="block text-blue-300 hover:bg-gray-700 px-3 py-2 rounded">Sensor</a>
+                <a href="{{ route('sensordata') }}" class="block text-blue-300 hover:bg-gray-700 px-3 py-2 rounded">Sensor Data</a>
+                <a href="{{ route('landsat') }}" class="block text-blue-300 hover:bg-gray-700 px-3 py-2 rounded">Landsat</a>
                 <a href="{{ route('other.app') }}" class="block text-blue-300 hover:bg-gray-700 px-3 py-2 rounded">Other APP</a>
             </nav>
         </div>
