@@ -3,7 +3,12 @@
 @section('title', 'Sensor Data')
 
 @section('content')
-    <h1 class="text-3xl font-bold mb-8">Sensor Data Process</h1>
+    <h1 class="text-3xl font-bold mb-1">Senson Data Process</h1>
+
+    {{-- Clickable Sensor Information --}}
+    <h2 id="sensor-info" class="font-regular mb-5 cursor-pointer text-blue-600 hover:underline">
+        Sensor Data Information
+    </h2>
 
     {{-- Error Handling: Display an alert if there is an error --}}
     @if (session('error'))
@@ -29,7 +34,7 @@
 
         <div class="mb-6">
             <label class="block text-gray-700 text-sm font-bold mb-2" for="application_users">
-                Risk App User List
+                Application User List
             </label>
             <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
                    id="application_users" 
@@ -61,13 +66,17 @@
     </form>
 
     <script>
+        document.getElementById('sensor-info').addEventListener('click', function () {
+            alert('The Sensor Data');
+        });
+
         const input = document.getElementById('application_users');
         let files = [];
 
         input.addEventListener('change', function (event) {
             const fileList = Array.from(event.target.files);
             const fileTableBody = document.getElementById('file-list-body');
-A
+
             files = files.concat(fileList);
 
             renderFileList();
@@ -115,4 +124,3 @@ A
         }
     </script>
 @endsection
-
