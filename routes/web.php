@@ -14,6 +14,7 @@ use App\Http\Controllers\OmnixController;
 use App\Http\Controllers\RTGSController;
 use App\Http\Controllers\SensordataController;
 use App\Http\Controllers\LandsatController;
+use App\Http\Controllers\MagicCubeController;
 
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -29,6 +30,7 @@ Route::match(['get', 'post'], '/omnix', [OmnixController::class, 'omnix'])->name
 Route::match(['get', 'post'], '/rtgs', [RTGSController::class, 'rtgs'])->name('rtgs');
 Route::match(['get', 'post'], '/sensordata', [SensordataController::class, 'sensordata'])->name('sensordata');
 Route::match(['get', 'post'], '/landsat', [LandsatController::class, 'landsat'])->name('landsat');
+Route::match(['get', 'post'], '/magic', [MagicCubeController::class, 'magic'])->name('magic');
 
 
 
