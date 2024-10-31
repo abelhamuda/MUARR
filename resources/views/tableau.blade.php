@@ -10,6 +10,21 @@
         Tableau Application Information
     </h2>
 
+    {{-- GitLab Information Modal --}}
+    <div id="modal" style="display: none;" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white w-1/3 p-5 rounded-lg shadow-lg">
+            <h3 class="text-xl font-bold mb-4">Gitlab Application Information</h3>
+            <p>The Gitlab Application includes:</p>
+            <ul class="list-disc list-inside ml-4 mt-2">
+                <li>Gitlab Group</li>
+                <li>Gitlab Internal</li>
+            </ul>
+            <button id="close-modal" class="mt-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                Close
+            </button>
+        </div>
+    </div>
+
     {{-- Error Handling: Display an alert if there is an error --}}
     @if (session('error'))
     <script>
@@ -18,23 +33,6 @@
         });
     </script>
     @endif
-
-    {{-- Modal for Information --}}
-    <div id="infoModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
-        <div class="bg-white rounded-lg shadow-lg p-6 w-11/12 md:w-1/3">
-            <h3 id="modalTitle" class="text-lg font-bold mb-4 cursor-pointer">
-                Tableau Application Information
-            </h3>
-            <p>The Tableau Application includes:</p>
-            <ul class="list-disc pl-5">
-                <li>Gitlab Group</li>
-                <li>Gitlab Internal</li>
-            </ul>
-            <button id="closeModal" class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                Close
-            </button>
-        </div>
-    </div>
 
     <form action="{{ route('tableau') }}" method="POST" enctype="multipart/form-data" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
         @csrf
@@ -83,21 +81,20 @@
     </form>
 
     <script>
-        // Show modal when the modal title is clicked
-        document.getElementById('modalTitle').addEventListener('click', function () {
-            document.getElementById('infoModal').classList.remove('hidden');
+        // Modal control
+        const modal = document.getElementById('modal');
+        const openModalBtn = document.getElementById('gitlab-info');
+        const closeModalBtn = document.getElementById('close-modal');
+
+        openModalBtn.addEventListener('click', () => {
+            modal.style.display = "flex";
         });
 
-        // Close modal when the close button is clicked
-        document.getElementById('closeModal').addEventListener('click', function () {
-            document.getElementById('infoModal').classList.add('hidden');
+        closeModalBtn.addEventListener('click', () => {
+            modal.style.display = "none";
         });
 
-        // Show modal when the information header is clicked
-        document.getElementById('info').addEventListener('click', function () {
-            document.getElementById('infoModal').classList.remove('hidden');
-        });
-
+        // File list handling
         const input = document.getElementById('application_users');
         let files = [];
 
