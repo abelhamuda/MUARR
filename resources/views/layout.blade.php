@@ -25,6 +25,8 @@
                 <a href="{{ route('sensordata') }}" class="block text-blue-300 hover:bg-gray-700 px-3 py-2 rounded">Sensor Data</a>
                 <a href="{{ route('landsat') }}" class="block text-blue-300 hover:bg-gray-700 px-3 py-2 rounded">Landsat</a>
                 <a href="{{ route('magic') }}" class="block text-blue-300 hover:bg-gray-700 px-3 py-2 rounded">Magic Cube</a>
+                <a href="{{ route('jumpserver') }}" class="block text-blue-300 hover:bg-gray-700 px-3 py-2 rounded">Jumpserver</a>
+                <a href="{{ route('tableau') }}" class="block text-blue-300 hover:bg-gray-700 px-3 py-2 rounded">Tableau</a>
                 <a href="{{ route('other.app') }}" class="block text-blue-300 hover:bg-gray-700 px-3 py-2 rounded">Other APP</a>
             </nav>
         </div>

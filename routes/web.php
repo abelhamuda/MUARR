@@ -15,6 +15,8 @@ use App\Http\Controllers\RTGSController;
 use App\Http\Controllers\SensordataController;
 use App\Http\Controllers\LandsatController;
 use App\Http\Controllers\MagicCubeController;
+use App\Http\Controllers\JumpserverController;
+use App\Http\Controllers\TableauController;
 
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -31,6 +33,8 @@ Route::match(['get', 'post'], '/rtgs', [RTGSController::class, 'rtgs'])->name('r
 Route::match(['get', 'post'], '/sensordata', [SensordataController::class, 'sensordata'])->name('sensordata');
 Route::match(['get', 'post'], '/landsat', [LandsatController::class, 'landsat'])->name('landsat');
 Route::match(['get', 'post'], '/magic', [MagicCubeController::class, 'magic'])->name('magic');
+Route::match(['get', 'post'], '/jumpserver', [JumpserverController::class, 'jumpserver'])->name('jumpserver');
+Route::match(['get', 'post'], '/tableau', [TableauController::class, 'tableau'])->name('tableau');
 
 
 
