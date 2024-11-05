@@ -1,20 +1,20 @@
 @extends('layout')
 
-@section('title', 'Tableau')
+@section('title', 'IP Scape')
 
 @section('content')
-    <h1 class="text-3xl font-bold mb-1">Tableau Process</h1>
+    <h1 class="text-3xl font-bold mb-1">IP Scape Process</h1>
 
     {{-- Clickable Information --}}
     <h2 id="info" class="font-regular mb-5 cursor-pointer text-blue-600 hover:underline">
-        Tableau Application Information
+        IP Scape Application Information
     </h2>
 
-    {{-- GitLab Information Modal --}}
+    {{-- Information Modal --}}
     <div id="modal" style="display: none;" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
         <div class="bg-white w-1/3 p-5 rounded-lg shadow-lg">
-            <h3 class="text-xl font-bold mb-4">Tableau Application Information</h3>
-            <p>The Tableu Application includes:</p>
+            <h3 class="text-xl font-bold mb-4">IP Scape Application Information</h3>
+            <p>The IP Scape Application includes:</p>
             <ul class="list-disc list-inside ml-4 mt-2">
                 <li>-</li>
                 <li>-</li>
@@ -34,7 +34,7 @@
     </script>
     @endif
 
-    <form action="{{ route('tableau') }}" method="POST" enctype="multipart/form-data" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+    <form action="{{ route('ipscape') }}" method="POST" enctype="multipart/form-data" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
         @csrf
         <div class="mb-4">
             <label class="block text-gray-700 text-sm font-bold mb-2" for="active_employees">
@@ -75,7 +75,7 @@
         <div class="flex items-center justify-between">
             <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" 
                     type="submit">
-                Process Tableau
+                Process IP Scape
             </button>
         </div>
     </form>

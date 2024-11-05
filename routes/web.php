@@ -17,6 +17,7 @@ use App\Http\Controllers\LandsatController;
 use App\Http\Controllers\MagicCubeController;
 use App\Http\Controllers\JumpserverController;
 use App\Http\Controllers\TableauController;
+use App\Http\Controllers\IPScapeController;
 
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -35,6 +36,7 @@ Route::match(['get', 'post'], '/landsat', [LandsatController::class, 'landsat'])
 Route::match(['get', 'post'], '/magic', [MagicCubeController::class, 'magic'])->name('magic');
 Route::match(['get', 'post'], '/jumpserver', [JumpserverController::class, 'jumpserver'])->name('jumpserver');
 Route::match(['get', 'post'], '/tableau', [TableauController::class, 'tableau'])->name('tableau');
+Route::match(['get', 'post'], '/ipscape', [IPScapeController::class, 'ipscape'])->name('ipscape');
 
 
 
