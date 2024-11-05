@@ -18,6 +18,7 @@ use App\Http\Controllers\MagicCubeController;
 use App\Http\Controllers\JumpserverController;
 use App\Http\Controllers\TableauController;
 use App\Http\Controllers\IPScapeController;
+use App\Http\Controllers\MedallionController;
 
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -37,6 +38,7 @@ Route::match(['get', 'post'], '/magic', [MagicCubeController::class, 'magic'])->
 Route::match(['get', 'post'], '/jumpserver', [JumpserverController::class, 'jumpserver'])->name('jumpserver');
 Route::match(['get', 'post'], '/tableau', [TableauController::class, 'tableau'])->name('tableau');
 Route::match(['get', 'post'], '/ipscape', [IPScapeController::class, 'ipscape'])->name('ipscape');
+Route::match(['get', 'post'], '/medallion', [MedallionController::class, 'medallion'])->name('medallion');
 
 
 
