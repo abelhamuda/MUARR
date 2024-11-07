@@ -20,6 +20,7 @@ use App\Http\Controllers\TableauController;
 use App\Http\Controllers\IPScapeController;
 use App\Http\Controllers\MedallionController;
 use App\Http\Controllers\SupersetController;
+use App\Http\Controllers\ZoomController;
 
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -41,6 +42,7 @@ Route::match(['get', 'post'], '/tableau', [TableauController::class, 'tableau'])
 Route::match(['get', 'post'], '/ipscape', [IPScapeController::class, 'ipscape'])->name('ipscape');
 Route::match(['get', 'post'], '/medallion', [MedallionController::class, 'medallion'])->name('medallion');
 Route::match(['get', 'post'], '/superset', [SupersetController::class, 'superset'])->name('superset');
+Route::match(['get', 'post'], '/zoom', [ZoomController::class, 'zoom'])->name('zoom');
 
 
 

@@ -30,6 +30,7 @@
                 <a href="{{ route('ipscape') }}" class="block text-blue-300 hover:bg-gray-700 px-3 py-2 rounded">IP Scape</a>
                 <a href="{{ route('medallion') }}" class="block text-blue-300 hover:bg-gray-700 px-3 py-2 rounded">Medallion</a>
                 <a href="{{ route('superset') }}" class="block text-blue-300 hover:bg-gray-700 px-3 py-2 rounded">Superset</a>
+                <a href="{{ route('zoom') }}" class="block text-blue-300 hover:bg-gray-700 px-3 py-2 rounded">Zoom</a>
                 <a href="{{ route('other.app') }}" class="block text-blue-300 hover:bg-gray-700 px-3 py-2 rounded">Other APP</a>
             </nav>
         </div>
