@@ -19,6 +19,7 @@ use App\Http\Controllers\JumpserverController;
 use App\Http\Controllers\TableauController;
 use App\Http\Controllers\IPScapeController;
 use App\Http\Controllers\MedallionController;
+use App\Http\Controllers\SupersetController;
 
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -39,6 +40,7 @@ Route::match(['get', 'post'], '/jumpserver', [JumpserverController::class, 'jump
 Route::match(['get', 'post'], '/tableau', [TableauController::class, 'tableau'])->name('tableau');
 Route::match(['get', 'post'], '/ipscape', [IPScapeController::class, 'ipscape'])->name('ipscape');
 Route::match(['get', 'post'], '/medallion', [MedallionController::class, 'medallion'])->name('medallion');
+Route::match(['get', 'post'], '/superset', [SupersetController::class, 'superset'])->name('superset');
 
 
 
