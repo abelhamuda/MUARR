@@ -22,6 +22,7 @@ use App\Http\Controllers\MedallionController;
 use App\Http\Controllers\SupersetController;
 use App\Http\Controllers\ZoomController;
 use App\Http\Controllers\EprocController;
+use App\Http\Controllers\CollectionController;
 
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -45,6 +46,7 @@ Route::match(['get', 'post'], '/medallion', [MedallionController::class, 'medall
 Route::match(['get', 'post'], '/superset', [SupersetController::class, 'superset'])->name('superset');
 Route::match(['get', 'post'], '/zoom', [ZoomController::class, 'zoom'])->name('zoom');
 Route::match(['get', 'post'], '/eproc', [EprocController::class, 'eproc'])->name('eproc');
+Route::match(['get', 'post'], '/collection', [CollectionController::class, 'collection'])->name('collection');
 
 
 
