@@ -24,6 +24,7 @@ use App\Http\Controllers\ZoomController;
 use App\Http\Controllers\EprocController;
 use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\AntasenaController;
+use App\Http\Controllers\SKNBIController;
 
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -49,6 +50,7 @@ Route::match(['get', 'post'], '/zoom', [ZoomController::class, 'zoom'])->name('z
 Route::match(['get', 'post'], '/eproc', [EprocController::class, 'eproc'])->name('eproc');
 Route::match(['get', 'post'], '/collection', [CollectionController::class, 'collection'])->name('collection');
 Route::match(['get', 'post'], '/antasena', [AntasenaController::class, 'antasena'])->name('antasena');
+Route::match(['get', 'post'], '/sknbi', [SKNBIController::class, 'sknbi'])->name('sknbi');
 
 
 Route::get('/icore', [IcoreController::class, 'icore'])->name('icore');
