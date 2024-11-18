@@ -26,6 +26,7 @@ use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\AntasenaController;
 use App\Http\Controllers\SKNBIController;
 use App\Http\Controllers\PrestoController;
+use App\Http\Controllers\SLIKOJKController;
 
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -53,6 +54,7 @@ Route::match(['get', 'post'], '/collection', [CollectionController::class, 'coll
 Route::match(['get', 'post'], '/antasena', [AntasenaController::class, 'antasena'])->name('antasena');
 Route::match(['get', 'post'], '/sknbi', [SKNBIController::class, 'sknbi'])->name('sknbi');
 Route::match(['get', 'post'], '/presto', [PrestoController::class, 'presto'])->name('presto');
+Route::match(['get', 'post'], '/slikojk', [SLIKOJKController::class, 'slikojk'])->name('slikojk');
 
 
 Route::get('/icore', [IcoreController::class, 'icore'])->name('icore');
