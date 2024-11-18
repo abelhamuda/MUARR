@@ -25,6 +25,7 @@ use App\Http\Controllers\EprocController;
 use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\AntasenaController;
 use App\Http\Controllers\SKNBIController;
+use App\Http\Controllers\PrestoController;
 
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -51,6 +52,7 @@ Route::match(['get', 'post'], '/eproc', [EprocController::class, 'eproc'])->name
 Route::match(['get', 'post'], '/collection', [CollectionController::class, 'collection'])->name('collection');
 Route::match(['get', 'post'], '/antasena', [AntasenaController::class, 'antasena'])->name('antasena');
 Route::match(['get', 'post'], '/sknbi', [SKNBIController::class, 'sknbi'])->name('sknbi');
+Route::match(['get', 'post'], '/presto', [PrestoController::class, 'presto'])->name('presto');
 
 
 Route::get('/icore', [IcoreController::class, 'icore'])->name('icore');
