@@ -27,6 +27,7 @@ use App\Http\Controllers\AntasenaController;
 use App\Http\Controllers\SKNBIController;
 use App\Http\Controllers\PrestoController;
 use App\Http\Controllers\SLIKOJKController;
+use App\Http\Controllers\EdapemController;
 
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -55,6 +56,7 @@ Route::match(['get', 'post'], '/antasena', [AntasenaController::class, 'antasena
 Route::match(['get', 'post'], '/sknbi', [SKNBIController::class, 'sknbi'])->name('sknbi');
 Route::match(['get', 'post'], '/presto', [PrestoController::class, 'presto'])->name('presto');
 Route::match(['get', 'post'], '/slikojk', [SLIKOJKController::class, 'slikojk'])->name('slikojk');
+Route::match(['get', 'post'], '/edapem', [EdapemController::class, 'edapem'])->name('edapem');
 
 
 Route::get('/icore', [IcoreController::class, 'icore'])->name('icore');
