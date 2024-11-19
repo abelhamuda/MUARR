@@ -155,12 +155,6 @@ class EdapemController extends Controller
                 'NM Cabang' => $user[$userCols['nm_cabang']] ?? '',
                 'Status' => $user[$userCols['status']] ?? '',
                 'Last Login' => $user[$userCols['last_login']] ?? '',
-                // 'Status Aktif' => $user[$userCols['status_aktif']] ?? '',
-                // 'Dibuat Oleh' => $user[$userCols['dibuat_oleh']] ?? '',
-                // 'Dibuat Tgl' => $user[$userCols['dibuat_tgl']] ?? '',
-                // 'Diperbaharui Oleh' => $user[$userCols['diperbaharui_oleh']] ?? '',
-                // 'Diperbaharui Tgl' => $user[$userCols['diperbaharui_tgl']] ?? '',
-                // 'Login Terakhir' => $user[$userCols['login_terakhir']] ?? '',
                 'Status Review' => $status,
                 'Remarks' => $remark
             ];
