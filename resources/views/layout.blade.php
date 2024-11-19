@@ -38,6 +38,7 @@
                 <a href="{{ route('presto') }}" class="block text-blue-300 hover:bg-gray-700 px-3 py-2 rounded">Presto</a>
                 <a href="{{ route('slikojk') }}" class="block text-blue-300 hover:bg-gray-700 px-3 py-2 rounded">SLIK OJK</a>
                 <a href="{{ route('edapem') }}" class="block text-blue-300 hover:bg-gray-700 px-3 py-2 rounded">Edapem</a>
+                <a href="{{ route('dukcapil') }}" class="block text-blue-300 hover:bg-gray-700 px-3 py-2 rounded">Dukcapil Portal</a>
                 <a href="{{ route('other.app') }}" class="block text-blue-300 hover:bg-gray-700 px-3 py-2 rounded">Other APP</a>
             </nav>
         </div>
