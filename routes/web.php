@@ -29,6 +29,7 @@ use App\Http\Controllers\PrestoController;
 use App\Http\Controllers\SLIKOJKController;
 use App\Http\Controllers\EdapemController;
 use App\Http\Controllers\DukcapilPortalController;
+use App\Http\Controllers\SKNController;
 
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -59,6 +60,7 @@ Route::match(['get', 'post'], '/presto', [PrestoController::class, 'presto'])->n
 Route::match(['get', 'post'], '/slikojk', [SLIKOJKController::class, 'slikojk'])->name('slikojk');
 Route::match(['get', 'post'], '/edapem', [EdapemController::class, 'edapem'])->name('edapem');
 Route::match(['get', 'post'], '/dukcapil', [DukcapilPortalController::class, 'dukcapil'])->name('dukcapil');
+Route::match(['get', 'post'], '/skn', [SKNController::class, 'skn'])->name('skn');
 
 
 Route::get('/icore', [IcoreController::class, 'icore'])->name('icore');
