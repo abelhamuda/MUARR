@@ -9,25 +9,25 @@ class SSOController extends Controller
     public function ssoprocess(Request $request)
     {
         if ($request->isMethod('get')) {
-            return view('sso'); // SSO Process form
+            return view('sso');
         }
-
+    
         $request->validate([
             'active_employees' => 'required|file|mimes:csv,txt',
             'application_users' => 'required|array',
-            'application_users.*' => 'file|mimes:csv,txt',
+            'application_users.*' => 'required|file|mimes:csv,txt',
         ]);
-
+    
         try {
-            $activeEmployees = $this->parseCSV($request->file('active_employees')->getPathname(), 'full_name');
-
+            $activeEmployees = $this->parseCSV($request->file('active_employees')->getPathname());
+    
             $zip = new \ZipArchive();
-            $zipFilename = 'employee_status_reports.zip';
+            $zipFilename = 'SSO-Application_review.zip';
             $zipPath = storage_path($zipFilename);
-
+    
             if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) === TRUE) {
                 foreach ($request->file('application_users') as $applicationFile) {
-                    $applicationUsers = $this->parseCSV($applicationFile->getPathname(), 'nama_lengkap');
+                    $applicationUsers = $this->parseCSV($applicationFile->getPathname());
                     $results = $this->compareEmployees($activeEmployees, $applicationUsers);
                     $csvContent = $this->generateCSV($results);
                     $outputFilename = pathinfo($applicationFile->getClientOriginalName(), PATHINFO_FILENAME) . '_Reviewed.csv';
@@ -35,112 +35,155 @@ class SSOController extends Controller
                 }
                 $zip->close();
             }
-
+    
             return response()->download($zipPath)->deleteFileAfterSend(true);
-
+    
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', $e->getMessage());
+            \Log::error($e->getMessage());
+            return redirect()->back()->with('error', 'An error occurred during processing. Please try again.');
         }
     }
 
-
-    private function parseCSV($filepath, $nameColumn)
+    private function parseCSV($filepath)
     {
         $rows = [];
         $columns = [];
     
-        if (($handle = fopen($filepath, "r")) !== FALSE) {
+        try {
+            if (($handle = fopen($filepath, "r")) === FALSE) {
+                throw new \Exception("Unable to open the file: $filepath");
+            }
+    
             $header = fgetcsv($handle, 1000, ",");
     
             foreach ($header as $index => $columnName) {
                 $columnName = strtolower(trim($columnName));
-                if (preg_match('/user\s?id/i', $columnName)) {
-                    $columns['user_id'] = $index;
-                } elseif (preg_match('/nip/i', $columnName)) {
-                    $columns['nip'] = $index;
-                } elseif (preg_match('/email/i', $columnName)) {
-                    $columns['email'] = $index;
-                } elseif (preg_match("/full\s?name/i", $columnName)) {
-                    $columns['name'] = $index;  
-                } elseif (preg_match('/nama\s?lengkap/i', $columnName)) {
-                    $columns['name'] = $index;  
-                } elseif (preg_match('/last\s?login/i', $columnName)) {
-                    $columns['last_login'] = $index;
-                } elseif (preg_match('/last\s?seen/i', $columnName)) {
-                    $columns['last_seen'] = $index;
-                }
+    
+                switch (true) {
+                    case ($columnName === 'email'):
+                        $columns['email'] = $index;
+                        break;
+
+                    case (preg_match('/nama\s?lengkap/i', $columnName)):
+                        $columns['nama_lengkap'] = $index;
+                        break;
+
+                    case (preg_match('/user\s?id/i', $columnName)):
+                        $columns['user_id'] = $index;
+                        break;
+                
+                    case (preg_match('/nip/i', $columnName)):
+                        $columns['nip'] = $index;
+                        break;
+
+                        case ($columnName === 'email'):
+                            $columns['email'] = $index;
+                            break;
+                
+                    case (preg_match('/last\s?login/i', $columnName)):
+                        $columns['last_login'] = $index;
+                        break;
+                
+                    case (preg_match('/last\s?seen/i', $columnName)):
+                        $columns['last_seen'] = $index;
+                        break;
+                
+                    case (preg_match('/status/i', $columnName)):
+                        $columns['status_akun'] = $index;
+                        break;
+                
+                    case (preg_match('/role/i', $columnName)):
+                        $columns['role'] = $index;
+                        break;
+                    }
+                    
             }
     
-            if (!isset($columns['name'])) {
-                throw new \Exception("No \"Full Name\" or \"Nama Lengkap\" column found in the CSV file.");
+            if (!isset($columns['email'])) {
+                throw new \Exception('No "Email" column found in the CSV file.');
             }
     
             while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
                 $rows[] = $data;
             }
-            fclose($handle);
+        } catch (\Exception $e) {
+            echo "Error: " . $e->getMessage();
+        } finally {
+            if (isset($handle) && $handle !== FALSE) {
+                fclose($handle);
+            }
         }
     
         return ['rows' => $rows, 'columns' => $columns];
-    }    
+    }
+        
 
-
-    
     private function compareEmployees($activeEmployees, $applicationUsers)
     {
         $results = [];
         $activeRows = $activeEmployees['rows'];
-        $activeNameCol = $activeEmployees['columns']['name'];
+        $activeNameCol = $activeEmployees['columns']['email'];  
         $userRows = $applicationUsers['rows'];
         $userCols = $applicationUsers['columns'];
-
+    
         foreach ($userRows as $user) {
             $status = 'Resign';
-            $remark = 'Disable'; 
-            $userName = $this->getNameFromRecord($user, $userCols['name']);
-            $lastLogin = $user[$userCols['last_login']] ?? 'N/A';
-            $lastSeen = $user[$userCols['last_seen']] ?? 'N/A';
-
+            $remark = 'Disable';
+    
+            if (isset($userCols['email']) && is_array($user)) {
+                $userName = $this->getNameFromRecord($user, $userCols['email']);
+            } else {
+                continue; 
+            }
+    
             foreach ($activeRows as $employee) {
-                $employeeName = $this->getNameFromRecord($employee, $activeNameCol);
+                
+                if (is_array($employee) && isset($activeNameCol)) {
+                    $employeeName = $this->getNameFromRecord($employee, $activeNameCol);
+                } else {
+                    continue;
+                }
+    
                 if ($this->compareNames($userName, $employeeName)) {
                     $status = 'Active';
-                    $remark = 'Keep'; 
+                    $remark = 'Keep';
                     break;
                 }
             }
-
+    
             $results[] = [
                 'User ID' => $user[$userCols['user_id']] ?? '',
-                'NIP' => $user[$userCols['nip']] ?? '',        
-                'Email' => $user[$userCols['email']] ?? '',    
-                'Nama Lengkap' => $userName,
-                'Last Login' => $lastLogin,
-                'Last Seen' => $lastSeen,
-                'Status' => $status,
+                'NIP' => $user[$userCols['nip']] ?? '',
+                'Email' => $userName,
+                'Nama Lengkap' => $user[$userCols['nama_lengkap']] ?? '',
+                'Status Akun' => $user[$userCols['status_akun']] ?? '',
+                'Role' => $user[$userCols['role']] ?? '',
+                'Last Login' => $user[$userCols['last_login']] ?? '',
+                'Last Seen' => $user[$userCols['last_seen']] ?? '',
+                'Status Review' => $status,
                 'Remarks' => $remark
             ];
         }
-
+    
         return $results;
     }
-
+    
     private function generateCSV($data)
     {
         $output = fopen('php://temp', 'w');
-
-        fputcsv($output, ['User ID', 'NIP', 'Email', 'Nama Lengkap', 'Last Login', 'Last Seen', 'Status', 'Remarks']);
-
+     
+        fputcsv($output, ['User ID', 'NIP', 'Email', 'Nama Lengkap', 'Status Akun', 'Role', 'Last Login', 'Last Seen', 'Status Review', 'Remarks']);
+    
         foreach ($data as $row) {
             fputcsv($output, $row);
         }
-
+    
         rewind($output);
         $csvContent = stream_get_contents($output);
         fclose($output);
-
+    
         return $csvContent;
-    }
+    }        
 
     private function getNameFromRecord($record, $nameColumnIndex)
     {
@@ -158,6 +201,6 @@ class SSOController extends Controller
 
         $similarity = 1 - (levenshtein($name1, $name2) / max(strlen($name1), strlen($name2)));
 
-        return $similarity >= 0.45;
+        return $similarity >= 0.8;
     }
 }

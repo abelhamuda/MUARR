@@ -1,14 +1,39 @@
 @extends('layout')
 
-@section('title', 'SSO Process')
+@section('title', 'SSO')
 
 @section('content')
-    <h1 class="text-3xl font-bold mb-1">SSO Process</h1>
+    <h1 class="text-3xl font-bold mb-1">SSO Application</h1>
 
-    {{-- Clickable SSO Information --}}
-    <h2 id="sso-info" class="font-regular mb-5 cursor-pointer text-blue-600 hover:underline">
-        SSO Application Information
+    {{-- Clickable Information --}}
+    <h2 id="info" class="font-regular mb-5 cursor-pointer text-blue-600 hover:underline">
+       SSO Application Information
     </h2>
+
+    {{-- Information Modal --}}
+    <div id="modal" style="display: none;" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white w-1/3 p-5 rounded-lg shadow-lg">
+            <h3 class="text-xl font-bold mb-4">SSO Application Information</h3>
+            <p>SSO Application includes:</p>
+            <ul class="list-disc list-inside ml-4 mt-2">
+                <li>BNC Account Registration </li>
+                <li>BNC Debt Collection Agency </li>
+                <li>BNC Dukcapil Reporting </li>
+                <li>BNC OJK BOX </li>
+                <li>BNC Reporting </li>
+                <li>BNC Signature Specimen </li>
+                <li>BNC SLIK </li>
+                <li>BNC SVC </li>
+                <li>BNC Insurance </li>
+                <li>BNC Portal </li>
+                <li>BNC PPATK/APUPPT </li>
+                <li>SSO AUTH</li> 
+            </ul>
+            <button id="close-modal" class="mt-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                Close
+            </button>
+        </div>
+    </div>
 
     {{-- Error Handling: Display an alert if there is an error --}}
     @if (session('error'))
@@ -66,10 +91,20 @@
     </form>
 
     <script>
-        document.getElementById('sso-info').addEventListener('click', function () {
-            alert('The SSO Application includes: \n- BNC Account Registration \n- BNC Debt Collection Agency \n- BNC Dukcapil Reporting \n- BNC OJK BOX \n- BNC Reporting \n- BNC Signature Specimen \n- BNC SLIK \n- BNC SVC \n- BNC Insurance \n- BNC Portal \n- BNC PPATK/APUPPT \n- SSO AUTH');
+        // Modal control
+        const modal = document.getElementById('modal');
+        const openModalBtn = document.getElementById('info');
+        const closeModalBtn = document.getElementById('close-modal');
+
+        openModalBtn.addEventListener('click', () => {
+            modal.style.display = "flex";
         });
 
+        closeModalBtn.addEventListener('click', () => {
+            modal.style.display = "none";
+        });
+
+        // File list handling
         const input = document.getElementById('application_users');
         let files = [];
 
