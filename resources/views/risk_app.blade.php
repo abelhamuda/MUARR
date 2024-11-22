@@ -1,9 +1,31 @@
 @extends('layout')
 
-@section('title', 'Risk Application')
+@section('title', 'Risk App')
 
 @section('content')
-    <h1 class="text-3xl font-bold mb-8">Risk App Process</h1>
+    <h1 class="text-3xl font-bold mb-1">Risk Application</h1>
+
+    {{-- Clickable Information --}}
+    <h2 id="info" class="font-regular mb-5 cursor-pointer text-blue-600 hover:underline">
+       Risk Application Information
+    </h2>
+
+    {{-- Information Modal --}}
+    <div id="modal" style="display: none;" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white w-1/3 p-5 rounded-lg shadow-lg">
+            <h3 class="text-xl font-bold mb-4">Risk Application Information</h3>
+            <p>Risk Application includes:</p>
+            <ul class="list-disc list-inside ml-4 mt-2">
+                <li>CIB</li>
+                <li>NeoApps</li>
+                <li>RAC</li>
+                <li>RCMS</li>
+            </ul>
+            <button id="close-modal" class="mt-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                Close
+            </button>
+        </div>
+    </div>
 
     {{-- Error Handling: Display an alert if there is an error --}}
     @if (session('error'))
@@ -29,7 +51,7 @@
 
         <div class="mb-6">
             <label class="block text-gray-700 text-sm font-bold mb-2" for="application_users">
-                Risk App User List
+                Application User List
             </label>
             <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
                    id="application_users" 
@@ -61,6 +83,20 @@
     </form>
 
     <script>
+        // Modal control
+        const modal = document.getElementById('modal');
+        const openModalBtn = document.getElementById('info');
+        const closeModalBtn = document.getElementById('close-modal');
+
+        openModalBtn.addEventListener('click', () => {
+            modal.style.display = "flex";
+        });
+
+        closeModalBtn.addEventListener('click', () => {
+            modal.style.display = "none";
+        });
+
+        // File list handling
         const input = document.getElementById('application_users');
         let files = [];
 
@@ -115,4 +151,3 @@
         }
     </script>
 @endsection
-

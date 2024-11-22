@@ -22,7 +22,7 @@ class RiskAppController extends Controller
             $activeEmployees = $this->parseCSV($request->file('active_employees')->getPathname());
     
             $zip = new \ZipArchive();
-            $zipFilename = 'employee_status_reports.zip';
+            $zipFilename = 'Risk-Application_review.zip';
             $zipPath = storage_path($zipFilename);
     
             if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) === TRUE) {
@@ -39,7 +39,7 @@ class RiskAppController extends Controller
             return response()->download($zipPath)->deleteFileAfterSend(true);
     
         } catch (\Exception $e) {
-            \Log::error($e->getMessage());  // Add logging
+            \Log::error($e->getMessage());
             return redirect()->back()->with('error', 'An error occurred during processing. Please try again.');
         }
     }
@@ -49,49 +49,84 @@ class RiskAppController extends Controller
         $rows = [];
         $columns = [];
     
-        if (($handle = fopen($filepath, "r")) !== FALSE) {
+        try {
+            if (($handle = fopen($filepath, "r")) === FALSE) {
+                throw new \Exception("Unable to open the file: $filepath");
+            }
+    
             $header = fgetcsv($handle, 1000, ",");
     
             foreach ($header as $index => $columnName) {
                 $columnName = strtolower(trim($columnName));
     
-                // Map required columns based on patterns
-                if (preg_match('/email/i', $columnName)) {
-                    $columns['email'] = $index;
-                } elseif (preg_match('/login_account/i', $columnName)) {
-                    $columns['login_account'] = $index;
-                } elseif (preg_match('/uid/i', $columnName)) {
-                    $columns['uid'] = $index;
-                } elseif (preg_match('/user_name/i', $columnName)) {
-                    $columns['user_name'] = $index;
-                } elseif (preg_match('/user_create_time/i', $columnName)) {
-                    $columns['user_create_time'] = $index;
-                } elseif (preg_match('/user_update_time/i', $columnName)) {
-                    $columns['user_update_time'] = $index;
-                } elseif (preg_match('/delete_flag/i', $columnName)) {
-                    $columns['delete_flag'] = $index;
-                } elseif (preg_match('/role_names/i', $columnName)) {
-                    $columns['role_names'] = $index;
-                } elseif (preg_match('/system_names/i', $columnName)) {
-                    $columns['system_names'] = $index;
-                } elseif (preg_match('/last_login_time/i', $columnName)) {
-                    $columns['last_login_time'] = $index;
-                }
+                switch (true) {
+                    case ($columnName === 'email'):
+                        $columns['email'] = $index;
+                        break;
+
+                    case (preg_match('/login_account/i', $columnName)):
+                        $columns['login_account'] = $index;
+                        break;
+
+                    case (preg_match('/uid/i', $columnName)):
+                        $columns['uid'] = $index;
+                        break;
+                
+                    case (preg_match('/user_name/i', $columnName)):
+                        $columns['user_name'] = $index;
+                        break;
+
+                        // case ($columnName === 'email'):
+                        //     $columns['email'] = $index;
+                        //     break;
+                
+                    case (preg_match('/user_create_time/i', $columnName)):
+                        $columns['user_create_time'] = $index;
+                        break;
+                
+                    case (preg_match('/user_update_time/i', $columnName)):
+                        $columns['user_update_time'] = $index;
+                        break;
+                
+                    case (preg_match('/delete_flag/i', $columnName)):
+                        $columns['delete_flag'] = $index;
+                        break;
+                
+                    case (preg_match('/role_names/i', $columnName)):
+                        $columns['role_names'] = $index;
+                        break;
+                        break;
+                
+                    case (preg_match('/system_names/i', $columnName)):
+                        $columns['system_names'] = $index;
+                        break;
+                        break;
+                
+                    case (preg_match('/last_login_time/i', $columnName)):
+                        $columns['last_login_time'] = $index;
+                        break;
+                    }
+                    
             }
     
-            // Ensure that the required columns are present
             if (!isset($columns['email']) && !isset($columns['login_account'])) {
-                throw new \Exception('No "Full Name" or "login_account" column found in the CSV file.');
+                throw new \Exception('No "Email" or "Login Account" column found in the CSV file.');
             }
     
             while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
                 $rows[] = $data;
             }
-            fclose($handle);
+        } catch (\Exception $e) {
+            echo "Error: " . $e->getMessage();
+        } finally {
+            if (isset($handle) && $handle !== FALSE) {
+                fclose($handle);
+            }
         }
     
         return ['rows' => $rows, 'columns' => $columns];
-    }    
+    }
+        
 
     private function compareEmployees($activeEmployees, $applicationUsers)
     {
@@ -105,19 +140,18 @@ class RiskAppController extends Controller
             $status = 'Resign';
             $remark = 'Disable';
     
-            // Check if the user name column exists and the row is an array
             if (isset($userCols['login_account']) && is_array($user)) {
                 $userName = $this->getNameFromRecord($user, $userCols['login_account']);
             } else {
-                continue; // Skip this iteration if there's no user name column or row is invalid
+                continue; 
             }
     
             foreach ($activeRows as $employee) {
-                // Check if the active employee row is an array and full name column exists
+                
                 if (is_array($employee) && isset($activeNameCol)) {
                     $employeeName = $this->getNameFromRecord($employee, $activeNameCol);
                 } else {
-                    continue; // Skip this iteration if row/column is invalid
+                    continue;
                 }
     
                 if ($this->compareNames($userName, $employeeName)) {
@@ -128,7 +162,7 @@ class RiskAppController extends Controller
             }
     
             $results[] = [
-                'UID' => $user[$userCols['uid']] ?? '', 
+                'UID' => $user[$userCols['uid']] ?? '',
                 'Login Account' => $userName,
                 'User Name' => $user[$userCols['user_name']] ?? '',
                 'Create Time' => $user[$userCols['user_create_time']] ?? '',
@@ -148,7 +182,7 @@ class RiskAppController extends Controller
     private function generateCSV($data)
     {
         $output = fopen('php://temp', 'w');
-    
+     
         fputcsv($output, ['UID', 'Login Account', 'User Name', 'Create Time', 'Update Time', 'Delete Flag', 'Role Names', 'System Names', 'Last Login', 'Status', 'Remarks']);
     
         foreach ($data as $row) {
