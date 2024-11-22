@@ -9,26 +9,26 @@ class AlphabitController extends Controller
     public function alphabit(Request $request)
     {
         if ($request->isMethod('get')) {
-            return view('alphabit'); // Alphabit Process form
+            return view('alphabit');
         }
     
         $request->validate([
             'active_employees' => 'required|file|mimes:csv,txt',
             'application_users' => 'required|array',
-            'application_users.*' => 'file|mimes:csv,txt',
+            'application_users.*' => 'required|file|mimes:csv,txt',
         ]);
     
         try {
-            $activeEmployees = $this->parseCSV($request->file('active_employees')->getPathname(), 'employee');
+            $activeEmployees = $this->parseCSV($request->file('active_employees')->getPathname());
     
             $zip = new \ZipArchive();
-            $zipFilename = 'alphabit_comparison.zip';
+            $zipFilename = 'Alphabit_review.zip';
             $zipPath = storage_path($zipFilename);
     
             if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) === TRUE) {
                 foreach ($request->file('application_users') as $applicationFile) {
-                    $applicationUsers = $this->parseCSV($applicationFile->getPathname(), 'application');
-                    $results = $this->compareData($activeEmployees, $applicationUsers);
+                    $applicationUsers = $this->parseCSV($applicationFile->getPathname());
+                    $results = $this->compareEmployees($activeEmployees, $applicationUsers);
                     $csvContent = $this->generateCSV($results);
                     $outputFilename = pathinfo($applicationFile->getClientOriginalName(), PATHINFO_FILENAME) . '_Reviewed.csv';
                     $zip->addFromString($outputFilename, $csvContent);
@@ -39,93 +39,124 @@ class AlphabitController extends Controller
             return response()->download($zipPath)->deleteFileAfterSend(true);
     
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', $e->getMessage());
+            \Log::error($e->getMessage());
+            return redirect()->back()->with('error', 'An error occurred during processing. Please try again.');
         }
     }
 
-    private function parseCSV($filepath, $fileType)
+    private function parseCSV($filepath)
     {
         $rows = [];
         $columns = [];
     
-        if (($handle = fopen($filepath, "r")) !== FALSE) {
+        try {
+            if (($handle = fopen($filepath, "r")) === FALSE) {
+                throw new \Exception("Unable to open the file: $filepath");
+            }
+    
             $header = fgetcsv($handle, 1000, ",");
     
             foreach ($header as $index => $columnName) {
                 $columnName = strtolower(trim($columnName));
-                if ($fileType === 'employee' && preg_match('/full name/i', $columnName)) {
-                    $columns['full_name'] = $index;
-                } elseif ($fileType === 'application') {
-                    if ($columnName === 'opdesc') {
+    
+                switch (true) {
+                    case ($columnName === 'full name'):
+                        $columns['full_name'] = $index;
+                        break;
+
+                    case (preg_match('/opdesc/i', $columnName)):
                         $columns['opdesc'] = $index;
-                    } elseif ($columnName === 'opcode') {
+                        break;
+
+                    case (preg_match('/opcode/i', $columnName)):
                         $columns['opcode'] = $index;
-                    } elseif ($columnName === 'opprog') {
+                        break;
+                
+                    case (preg_match('/opprog/i', $columnName)):
                         $columns['opprog'] = $index;
-                    } elseif ($columnName === 'opautu') {
+                        break;
+                
+                    case (preg_match('/opautu/i', $columnName)):
                         $columns['opautu'] = $index;
-                    } elseif ($columnName === 'opdtlc') {
+                        break;
+                
+                    case (preg_match('/opdtlc/i', $columnName)):
                         $columns['opdtlc'] = $index;
+                        break;
                     }
-                }
+                    
             }
     
-            if ($fileType === 'employee' && !isset($columns['full_name'])) {
-                throw new \Exception('No "Full Name" column found in the employee CSV file.');
-            } elseif ($fileType === 'application' && !isset($columns['opdesc'])) {
-                throw new \Exception('No "OPDESC" column found in the application CSV file.');
+            if (!isset($columns['full_name']) && !isset($columns['opdesc'])) {
+                throw new \Exception('No "Email" or "OPDESC" column found in the CSV file.');
             }
     
             while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
                 $rows[] = $data;
             }
-            fclose($handle);
+        } catch (\Exception $e) {
+            echo "Error: " . $e->getMessage();
+        } finally {
+            if (isset($handle) && $handle !== FALSE) {
+                fclose($handle);
+            }
         }
     
         return ['rows' => $rows, 'columns' => $columns];
-    }    
-    
-    private function compareData($activeEmployees, $applicationUsers)
+    }
+        
+
+    private function compareEmployees($activeEmployees, $applicationUsers)
     {
         $results = [];
         $activeRows = $activeEmployees['rows'];
-        $activeFullNameCol = $activeEmployees['columns']['full_name']; 
+        $activeNameCol = $activeEmployees['columns']['full_name'];  
         $userRows = $applicationUsers['rows'];
         $userCols = $applicationUsers['columns'];
     
         foreach ($userRows as $user) {
             $status = 'Resign';
-            $remark = 'Disable'; 
-            $userOpdesc = $user[$userCols['opdesc']];
+            $remark = 'Disable';
+    
+            if (isset($userCols['opdesc']) && is_array($user)) {
+                $userName = $this->getNameFromRecord($user, $userCols['opdesc']);
+            } else {
+                continue; 
+            }
     
             foreach ($activeRows as $employee) {
-                $employeeFullName = $employee[$activeFullNameCol]; 
-                if ($this->compareNames($userOpdesc, $employeeFullName)) {
+                
+                if (is_array($employee) && isset($activeNameCol)) {
+                    $employeeName = $this->getNameFromRecord($employee, $activeNameCol);
+                } else {
+                    continue;
+                }
+    
+                if ($this->compareNames($userName, $employeeName)) {
                     $status = 'Active';
-                    $remark = 'Keep'; 
+                    $remark = 'Keep';
                     break;
                 }
             }
     
             $results[] = [
-                'OPCODE' => $user[$userCols['opcode']] ?? '',
-                'OPPROG' => $user[$userCols['opprog']] ?? '',
-                'OPAUTU' => $user[$userCols['opautu']] ?? '',
-                'OPDTLC' => $user[$userCols['opdtlc']] ?? '',
-                'OPDESC' => $userOpdesc,
-                'Status' => $status,
-                'Remarks' => $remark
+            'OPCODE' => $user[$userCols['opcode']] ?? '',
+            'OPPROG' => $user[$userCols['opprog']] ?? '',
+            'OPAUTU' => $user[$userCols['opautu']] ?? '',
+            'OPDTLC' => $user[$userCols['opdtlc']] ?? '',
+            'OPDESC' => $userName,
+            'Status' => $status,
+            'Remarks' => $remark
             ];
         }
     
         return $results;
     }
     
-    
     private function generateCSV($data)
     {
         $output = fopen('php://temp', 'w');
-    
+     
         fputcsv($output, ['OPCODE', 'OPPROG', 'OPAUTU', 'OPDTLC', 'OPDESC', 'Status', 'Remarks']);
     
         foreach ($data as $row) {
@@ -137,7 +168,12 @@ class AlphabitController extends Controller
         fclose($output);
     
         return $csvContent;
-    }    
+    }        
+
+    private function getNameFromRecord($record, $nameColumnIndex)
+    {
+        return $record[$nameColumnIndex] ?? '';
+    }
 
     private function compareNames($name1, $name2)
     {
@@ -150,6 +186,6 @@ class AlphabitController extends Controller
 
         $similarity = 1 - (levenshtein($name1, $name2) / max(strlen($name1), strlen($name2)));
 
-        return $similarity >= 0.45;
+        return $similarity >= 0.5;
     }
 }
