@@ -22,7 +22,7 @@ class OfficeAutomationController extends Controller
             $activeEmployees = $this->parseCSV($request->file('active_employees')->getPathname());
 
             $zip = new \ZipArchive();
-            $zipFilename = 'employee_status_reports.zip';
+            $zipFilename = 'Office-Automation_reports.zip';
             $zipPath = storage_path($zipFilename);
 
             if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) === TRUE) {
