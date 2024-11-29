@@ -144,7 +144,7 @@ class AdExchangeController extends Controller
             }
     
             $results[] = [
-                'Common Names' => $userName,
+                'CN' => $userName,
                 'Department' => $user[$userCols['department']] ?? '',
                 'EmailAddress' => $user[$userCols['email_address']] ?? '',
                 'DistinguishedName' => $user[$userCols['distinguished_name']] ?? '',
