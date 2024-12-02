@@ -3,12 +3,26 @@
 @section('title', 'RTGS')
 
 @section('content')
-    <h1 class="text-3xl font-bold mb-1">RTGS Process</h1>
+    <h1 class="text-3xl font-bold mb-1">RTGS</h1>
 
-    <!-- {{-- Clickable SSO Information --}}
-    <h2 id="gitlab-info" class="font-regular mb-5 cursor-pointer text-blue-600 hover:underline">
-        Gitlab Application Information
-    </h2> -->
+    {{-- Clickable Information --}}
+    <h2 id="info" class="font-regular mb-5 cursor-pointer text-blue-600 hover:underline">
+       RTGS Information
+    </h2>
+
+    {{-- Information Modal --}}
+    <div id="modal" style="display: none;" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white w-1/3 p-5 rounded-lg shadow-lg">
+            <h3 class="text-xl font-bold mb-4">RTGS Information</h3>
+            <p>RTGS includes:</p>
+            <ul class="list-disc list-inside ml-4 mt-2">
+                <li></li>
+            </ul>
+            <button id="close-modal" class="mt-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                Close
+            </button>
+        </div>
+    </div>
 
     {{-- Error Handling: Display an alert if there is an error --}}
     @if (session('error'))
@@ -66,10 +80,20 @@
     </form>
 
     <script>
-        document.getElementById('gitlab-info').addEventListener('click', function () {
-            alert('The Gitlab Application includes: \n- Gitlab Group \n- Gitlab Internal');
+        // Modal control
+        const modal = document.getElementById('modal');
+        const openModalBtn = document.getElementById('info');
+        const closeModalBtn = document.getElementById('close-modal');
+
+        openModalBtn.addEventListener('click', () => {
+            modal.style.display = "flex";
         });
 
+        closeModalBtn.addEventListener('click', () => {
+            modal.style.display = "none";
+        });
+
+        // File list handling
         const input = document.getElementById('application_users');
         let files = [];
 

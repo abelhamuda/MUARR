@@ -11,20 +11,20 @@ class RTGSController extends Controller
         if ($request->isMethod('get')) {
             return view('rtgs');
         }
-
+    
         $request->validate([
             'active_employees' => 'required|file|mimes:csv,txt',
             'application_users' => 'required|array',
-            'application_users.*' => 'file|mimes:csv,txt',
+            'application_users.*' => 'required|file|mimes:csv,txt',
         ]);
-
+    
         try {
             $activeEmployees = $this->parseCSV($request->file('active_employees')->getPathname());
-
+    
             $zip = new \ZipArchive();
-            $zipFilename = 'employee_status_reports.zip';
+            $zipFilename = 'RTGS_review.zip';
             $zipPath = storage_path($zipFilename);
-
+    
             if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) === TRUE) {
                 foreach ($request->file('application_users') as $applicationFile) {
                     $applicationUsers = $this->parseCSV($applicationFile->getPathname());
@@ -35,11 +35,12 @@ class RTGSController extends Controller
                 }
                 $zip->close();
             }
-
+    
             return response()->download($zipPath)->deleteFileAfterSend(true);
-
+    
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', $e->getMessage());
+            \Log::error($e->getMessage());
+            return redirect()->back()->with('error', 'An error occurred during processing. Please try again.');
         }
     }
 
@@ -47,42 +48,63 @@ class RTGSController extends Controller
     {
         $rows = [];
         $columns = [];
-
-        if (($handle = fopen($filepath, "r")) !== FALSE) {
+    
+        try {
+            if (($handle = fopen($filepath, "r")) === FALSE) {
+                throw new \Exception("Unable to open the file: $filepath");
+            }
+    
             $header = fgetcsv($handle, 1000, ",");
-
+    
             foreach ($header as $index => $columnName) {
                 $columnName = strtolower(trim($columnName));
-                // For active employees, we want the "Full Name" column
-                if (preg_match('/full\s?name/i', $columnName)) {
-                    $columns['full_name'] = $index;
-                // For application users, we now want the "Employee Name" column
-                } elseif (preg_match('/name/i', $columnName)) {
-                    $columns['name'] = $index;
-                 } elseif (preg_match('/user\s?code/i', $columnName)) {
-                    $columns['user_code'] = $index;
-                 } elseif (preg_match('/participant/i', $columnName)) {
-                    $columns['participant'] = $index;
-                } elseif (preg_match('/is\s?locked/i', $columnName)) {
-                    $columns['is_locked'] = $index;
-                } elseif (preg_match('/modification\s?date/i', $columnName)) {
-                    $columns['modification_date'] = $index;
-                }
-            }
+    
+                switch (true) {
+                    case ($columnName === 'full name'):
+                        $columns['full_name'] = $index;
+                        break;
 
-            // Ensure that the required columns are present
+                    case (preg_match('/name/i', $columnName)):
+                        $columns['name'] = $index;
+                        break;
+
+                    case (preg_match('/user\s?code/i', $columnName)):
+                        $columns['user_code'] = $index;
+                        break;
+                
+                    case (preg_match('/participant/i', $columnName)):
+                        $columns['participant'] = $index;
+                        break;
+                
+                    case (preg_match('/is\s?locked/i', $columnName)):
+                        $columns['is_locked'] = $index;
+                        break;
+                
+                    case (preg_match('/modification\s?date/i', $columnName)):
+                        $columns['modification_date'] = $index;
+                        break;
+                    }
+                    
+            }
+    
             if (!isset($columns['full_name']) && !isset($columns['name'])) {
-                throw new \Exception('No "Full Name" or "Name" column found in the CSV file.');
+                throw new \Exception('No "Full Name" & "Name" column found in the CSV file.');
             }
-
+    
             while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
                 $rows[] = $data;
             }
-            fclose($handle);
+        } catch (\Exception $e) {
+            echo "Error: " . $e->getMessage();
+        } finally {
+            if (isset($handle) && $handle !== FALSE) {
+                fclose($handle);
+            }
         }
-
+    
         return ['rows' => $rows, 'columns' => $columns];
     }
+        
 
     private function compareEmployees($activeEmployees, $applicationUsers)
     {
@@ -91,32 +113,32 @@ class RTGSController extends Controller
         $activeNameCol = $activeEmployees['columns']['full_name'];  
         $userRows = $applicationUsers['rows'];
         $userCols = $applicationUsers['columns'];
-
+    
         foreach ($userRows as $user) {
             $status = 'Resign';
             $remark = 'Disable';
-
+    
             if (isset($userCols['name']) && is_array($user)) {
                 $userName = $this->getNameFromRecord($user, $userCols['name']);
             } else {
-                continue;
+                continue; 
             }
-
+    
             foreach ($activeRows as $employee) {
-                // Check if the active employee row is an array and "full_name" column exists
+                
                 if (is_array($employee) && isset($activeNameCol)) {
                     $employeeName = $this->getNameFromRecord($employee, $activeNameCol);
                 } else {
-                    continue; // Skip this iteration if row/column is invalid
+                    continue;
                 }
-
+    
                 if ($this->compareNames($userName, $employeeName)) {
                     $status = 'Active';
                     $remark = 'Keep';
                     break;
                 }
             }
-
+    
             $results[] = [
                 'Name' => $userName,
                 'User Code' => $user[$userCols['user_code']] ?? '',
@@ -127,26 +149,26 @@ class RTGSController extends Controller
                 'Remarks' => $remark
             ];
         }
-
+    
         return $results;
     }
-
+    
     private function generateCSV($data)
     {
         $output = fopen('php://temp', 'w');
-
-        fputcsv($output, [ 'Name', 'User Code', 'Participant', 'Is Locked', 'Modification Date', 'Status', 'Remarks']);
-
+     
+        fputcsv($output, ['Name', 'User Code', 'Participant', 'Is Locked', 'Modification Date', 'Status', 'Remarks']);
+    
         foreach ($data as $row) {
             fputcsv($output, $row);
         }
-
+    
         rewind($output);
         $csvContent = stream_get_contents($output);
         fclose($output);
-
+    
         return $csvContent;
-    }
+    }        
 
     private function getNameFromRecord($record, $nameColumnIndex)
     {
@@ -163,6 +185,7 @@ class RTGSController extends Controller
         }
 
         $similarity = 1 - (levenshtein($name1, $name2) / max(strlen($name1), strlen($name2)));
-        return $similarity >= 0.75;
+
+        return $similarity >= 0.5;
     }
 }
