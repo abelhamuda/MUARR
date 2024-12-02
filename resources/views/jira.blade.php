@@ -3,12 +3,26 @@
 @section('title', 'Jira')
 
 @section('content')
-    <h1 class="text-3xl font-bold mb-8">Jira</h1>
+    <h1 class="text-3xl font-bold mb-1">Jira</h1>
 
-    <!-- {{-- Clickable SSO Information --}}
-    <h2 id="adexchange-info" class="font-regular mb-5 cursor-pointer text-blue-600 hover:underline">
-        Office Automation Information
-    </h2> -->
+    {{-- Clickable Information --}}
+    <h2 id="info" class="font-regular mb-5 cursor-pointer text-blue-600 hover:underline">
+       Jira Application Information
+    </h2>
+
+    {{-- Information Modal --}}
+    <div id="modal" style="display: none;" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white w-1/3 p-5 rounded-lg shadow-lg">
+            <h3 class="text-xl font-bold mb-4">Jira Application Information</h3>
+            <p>Jira Application includes:</p>
+            <ul class="list-disc list-inside ml-4 mt-2">
+               <li></li>
+            </ul>
+            <button id="close-modal" class="mt-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                Close
+            </button>
+        </div>
+    </div>
 
     {{-- Error Handling: Display an alert if there is an error --}}
     @if (session('error'))
@@ -19,7 +33,7 @@
     </script>
     @endif
 
-    <form action="{{ route('jira') }}" method="POST" enctype="multipart/form-data" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+    <form action="{{ route('sso.process') }}" method="POST" enctype="multipart/form-data" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
         @csrf
         <div class="mb-4">
             <label class="block text-gray-700 text-sm font-bold mb-2" for="active_employees">
@@ -66,10 +80,20 @@
     </form>
 
     <script>
-        // document.getElementById('adexchange-info').addEventListener('click', function () {
-        //     alert('In this Application process includes: \n- Active Directory \n- Email Exchange \n\nLakukan penyesuaian pada Tabel Active Directory dan Email Exchange dengan hanya menarik Tabel : \n- CN \n- Created \n- Description \n- EmailAddress \n- EmployeeID \n- WhenCreated \n- LastLogonDate ');
-        // });
+        // Modal control
+        const modal = document.getElementById('modal');
+        const openModalBtn = document.getElementById('info');
+        const closeModalBtn = document.getElementById('close-modal');
 
+        openModalBtn.addEventListener('click', () => {
+            modal.style.display = "flex";
+        });
+
+        closeModalBtn.addEventListener('click', () => {
+            modal.style.display = "none";
+        });
+
+        // File list handling
         const input = document.getElementById('application_users');
         let files = [];
 
