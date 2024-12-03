@@ -63,59 +63,37 @@ class AntasenaController extends Controller
                     case ($columnName === 'full name'):
                         $columns['full_name'] = $index;
                         break;
-    
-                    case (preg_match('/unnamed:\s?1/i', $columnName)):
+
+                    case (preg_match('/id\s?pengguna/i', $columnName)):
                         $columns['id_pengguna'] = $index;
                         break;
     
-                    case (preg_match('/unnamed:\s?2/i', $columnName)):
-                        $columns['cabang'] = $index;
-                        break;
-    
-                    case (preg_match('/unnamed:\s?3/i', $columnName)):
+                    case ($columnName === 'jangka waktu / kadaluarsa'):
                         $columns['jangka_waktu'] = $index;
                         break;
     
-                    case (preg_match('/unnamed:\s?4/i', $columnName)):
+                    case (preg_match('/cabang/i', $columnName)):
+                        $columns['cabang'] = $index;
+                        break;
+    
+                    case (preg_match('/status/i', $columnName)):
                         $columns['status'] = $index;
                         break;
     
-                    case (preg_match('/unnamed:\s?5/i', $columnName)):
+                    case (preg_match('/otoritas/i', $columnName)):
                         $columns['otoritas'] = $index;
                         break;
-
-                    // case ($columnName === 'id pengguna'):
-                    //     $columns['id_pengguna'] = $index;
-                    //     break;
-
-                    // case ($columnName === 'cabang'):
-                    //     $columns['cabang'] = $index;
-                    //     break;
-
-                    // case ($columnName === 'jangka waktu / kedaluarsa'):
-                    //     $columns['jangka_waktu'] = $index;
-                    //     break;
-
-                    // case (preg_match('/status/i', $columnName)):
-                    //     $columns['status'] = $index;
-                    //     break;
-
-                        
-                    // case ($columnName === 'otoritas'):
-                    //     $columns['otoritas'] = $index;
-                    //     break;
                 }
             }
     
             if (!isset($columns['full_name']) && !isset($columns['id_pengguna'])) {
-                throw new \Exception('No "Full Name" & "Name" column found in the CSV file.');
+                throw new \Exception('No "Full Name" & "ID" column found in the CSV file.');
             }
     
             while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
                 $rows[] = $data;
             }
         } catch (\Exception $e) {
-            // Log the exception or handle it as needed
             echo "Error: " . $e->getMessage();
         } finally {
             if (isset($handle) && $handle !== FALSE) {
@@ -163,7 +141,7 @@ class AntasenaController extends Controller
             $results[] = [
                 'ID Pengguna' => $userName,
                 'Cabang' => $user[$userCols['cabang']] ?? '',
-                'Jangka Waktu' => $user[$userCols['jangka_waktu']] ?? '',
+                'Jangka Waktu / Kadaluarsa' => $user[$userCols['jangka_waktu']] ?? '',
                 'Status Akun' => $user[$userCols['status']] ?? '',
                 'Otoritas' => $user[$userCols['otoritas']] ?? '',
                 'Status' => $status,
@@ -178,7 +156,7 @@ class AntasenaController extends Controller
     {
         $output = fopen('php://temp', 'w');
     
-        fputcsv($output, ['ID Pengguna', 'Cabang', 'Jangka Waktu', 'Status Akun', 'Otoritas', 'Status', 'Remarks']);
+        fputcsv($output, ['ID Pengguna', 'Cabang', 'Jangka Waktu / Kadaluarsa', 'Status Akun', 'Otoritas', 'Status', 'Remarks']);
     
         foreach ($data as $row) {
             fputcsv($output, $row);
